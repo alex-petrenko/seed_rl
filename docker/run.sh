@@ -23,12 +23,14 @@ cd $DIR
 
 ENVIRONMENT=$1
 AGENT=$2
-NUM_ACTORS=$3
+WORKERS=$3
 shift 3
+
 
 export PYTHONPATH=$PYTHONPATH:/
 
 ACTOR_BINARY="CUDA_VISIBLE_DEVICES='' python3 ../${ENVIRONMENT}/${AGENT}_main.py --run_mode=actor";
+NON_ACTOR_BINARY="python3 ../${ENVIRONMENT}/${AGENT}_main.py --run_mode=actor";
 LEARNER_BINARY="python3 ../${ENVIRONMENT}/${AGENT}_main.py --run_mode=learner";
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
@@ -49,14 +51,28 @@ tmux send-keys KPEnter
 tmux send-keys "../stop_local.sh"
 tmux new-window -d -n learner
 
-COMMAND='rm /tmp/agent -Rf; '"${LEARNER_BINARY}"' --logtostderr --pdb_post_mortem '"$@"' --num_actors='"${NUM_ACTORS}"''
+COMMAND='rm /tmp/agent -Rf; '"${LEARNER_BINARY}"' --logtostderr --pdb_post_mortem '"$@"' --num_actors='"${WORKERS}"''
 echo $COMMAND
 tmux send-keys -t "learner" "$COMMAND" ENTER
 
-for ((id=0; id<$NUM_ACTORS; id++)); do
+if [[ $WORKERS -lt 289 ]]; then
+  for ((id=0; id<$WORKERS; id++)); do
     tmux new-window -d -n "actor_${id}"
-    COMMAND=''"${ACTOR_BINARY}"' --logtostderr --pdb_post_mortem '"$@"' --num_actors='"${NUM_ACTORS}"' --task='"${id}"''
+    COMMAND=''"${ACTOR_BINARY}"' --logtostderr --pdb_post_mortem '"$@"' --num_actors='"${WORKERS}"' --task='"${id}"''
     tmux send-keys -t "actor_${id}" "$COMMAND" ENTER
-done
+    echo $COMMAND
+  done
+else
+  for ((id=0; id<288; id++)); do
+      tmux new-window -d -n "actor_${id}"
+      COMMAND=''"${ACTOR_BINARY}"' --logtostderr --pdb_post_mortem '"$@"' --num_actors='"${WORKERS}"' --task='"${id}"''
+      tmux send-keys -t "actor_${id}" "$COMMAND" ENTER
+  done
+  for ((id=288; id<$WORKERS; id++)); do
+      COMMAND=''"${ACTOR_BINARY}"' --logtostderr --pdb_post_mortem '"$@"' --num_actors='"${WORKERS}"' --task='"${id}"''
+      (export 'CUDA_VISIBLE_DEVICES=""' COMMAND &> /dev/null &)
+      echo $COMMAND
+  done 
+fi
 
 tmux attach -t seed_rl

@@ -28,7 +28,29 @@ from seed_rl.dmlab import env
 from seed_rl.dmlab import networks
 import tensorflow as tf
 
+import logging
+from logging import handlers
 
+class Logger(object):
+    level_relations = {
+        'debug':logging.DEBUG,
+        'info':logging.INFO,
+        'warning':logging.WARNING,
+        'error':logging.ERROR,
+        'crit':logging.CRITICAL
+    }
+
+    def __init__(self,filename,level='info',when='D',backCount=3,
+                 fmt='%(asctime)s : %(message)s'):
+        self.logger = logging.getLogger(filename)
+        format_str = logging.Formatter(fmt)
+        self.logger.setLevel(self.level_relations.get(level))
+        sh = logging.StreamHandler()
+        sh.setFormatter(format_str)
+        th = handlers.TimedRotatingFileHandler(filename=filename,when=when,backupCount=backCount,encoding='utf-8')
+        th.setFormatter(format_str)
+        self.logger.addHandler(sh)
+        self.logger.addHandler(th)
 
 FLAGS = flags.FLAGS
 
@@ -51,6 +73,7 @@ def create_optimizer(final_iteration):
 
 
 def main(argv):
+  fps_log = Logger('fps.log', level='info')
   if len(argv) > 1:
     raise app.UsageError('Too many command-line arguments.')
   if FLAGS.run_mode == 'actor':
@@ -58,7 +81,8 @@ def main(argv):
   elif FLAGS.run_mode == 'learner':
     learner.learner_loop(env.create_environment,
                          create_agent,
-                         create_optimizer)
+                         create_optimizer,
+                         fps_log)
   else:
     raise ValueError('Unsupported run mode {}'.format(FLAGS.run_mode))
 

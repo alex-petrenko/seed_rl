@@ -167,11 +167,13 @@ Unroll = collections.namedtuple(
 
 
 def validate_config():
+  logging.info('num of actor: %d', FLAGS.num_actors)
+  logging.info('FLAGS.inference_batch_size: %d', FLAGS.inference_batch_size)
   assert FLAGS.num_actors >= FLAGS.inference_batch_size, (
       'Inference batch size is bigger than the number of actors.')
 
 
-def learner_loop(create_env_fn, create_agent_fn, create_optimizer_fn):
+def learner_loop(create_env_fn, create_agent_fn, create_optimizer_fn, fps_log):
   """Main learner loop.
 
   Args:
@@ -451,9 +453,12 @@ def learner_loop(create_env_fn, create_agent_fn, create_optimizer_fn):
 
         # log the number of frames per second
         dt = time.time() - last_log_time
-        if dt > 120:
+        if dt > 60:
           df = tf.cast(num_env_frames - last_num_env_frames, tf.float32)
           tf.summary.scalar('num_environment_frames/sec', df / dt)
+          fps_log.logger.info('FPS: %f', df/dt)
+          print(f'FPS: {df / dt}')
+
           last_num_env_frames, last_log_time = num_env_frames, time.time()
 
         # log data from info_queue

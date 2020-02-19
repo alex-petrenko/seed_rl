@@ -34,7 +34,10 @@ flags.DEFINE_string(
     'dataset_path', '', 'Path to dataset needed for psychlab_*, see '
     'https://github.com/deepmind/lab/tree/master/data/brady_konkle_oliva2008')
 
-flags.DEFINE_string('game', 'explore_goal_locations_small', 'Game/level name.')
+#flags.DEFINE_string('game', 'explore_goal_locations_small', 'Game/level name.')
+flags.DEFINE_string('game', 'rooms_collect_good_objects_train', 'Game/level name.')
+
+
 flags.DEFINE_integer('width', 96, 'Width of observation.')
 flags.DEFINE_integer('height', 72, 'Height of observation.')
 flags.DEFINE_integer('num_action_repeats', 4, 'Number of action repeats.')
