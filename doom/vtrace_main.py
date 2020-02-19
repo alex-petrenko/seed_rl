@@ -93,7 +93,6 @@ def create_doom_env(x):
     return create_env(env_name, cfg=cfg)
 
 def main(argv):
-
   fps_log = Logger('fps.log', level='info')
   if len(argv) > 1:
     raise app.UsageError('Too many command-line arguments.')

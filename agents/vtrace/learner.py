@@ -41,9 +41,9 @@ flags.DEFINE_integer('save_checkpoint_secs', 1800,
                      'Checkpoint save period in seconds.')
 flags.DEFINE_integer('total_environment_frames', int(1e9),
                      'Total environment frames to train for.')
-flags.DEFINE_integer('batch_size', 2, 'Batch size for training.')
-flags.DEFINE_integer('inference_batch_size', 2, 'Batch size for inference.')
-flags.DEFINE_integer('unroll_length', 100, 'Unroll length in agent steps.')
+flags.DEFINE_integer('batch_size', 64, 'Batch size for training.')
+flags.DEFINE_integer('inference_batch_size', 32, 'Batch size for inference.')
+flags.DEFINE_integer('unroll_length', 32, 'Unroll length in agent steps.')
 flags.DEFINE_integer('num_training_tpus', 1, 'Number of TPUs for training.')
 flags.DEFINE_string('init_checkpoint', None,
                     'Path to the checkpoint used to initialize the agent.')

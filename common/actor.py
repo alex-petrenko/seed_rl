@@ -96,6 +96,10 @@ def actor_loop(create_env_fn):
               episode_return = 0
               episode_raw_return = 0
           actor_step += 1
+          if actor_step == 13:
+            with open(f'/tmp/actor_{FLAGS.task:03d}.txt', 'w') as fobj:
+              fobj.write(f'actor_{FLAGS.task} {actor_step} {reward}')
+
       except (tf.errors.UnavailableError, tf.errors.CancelledError) as e:
         logging.exception(e)
         env.close()

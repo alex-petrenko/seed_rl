@@ -69,8 +69,8 @@ else
       tmux send-keys -t "actor_${id}" "$COMMAND" ENTER
   done
   for ((id=288; id<$WORKERS; id++)); do
-      COMMAND=''"${ACTOR_BINARY}"' --logtostderr --pdb_post_mortem '"$@"' --num_actors='"${WORKERS}"' --task='"${id}"''
-      (export 'CUDA_VISIBLE_DEVICES=""' COMMAND &> /dev/null &)
+      COMMAND=''"${NON_ACTOR_BINARY}"' --logtostderr --pdb_post_mortem '"$@"' --num_actors='"${WORKERS}"' --task='"${id}"''
+      (export CUDA_VISIBLE_DEVICES=''; $COMMAND &> /dev/null &)
       echo $COMMAND
   done 
 fi
