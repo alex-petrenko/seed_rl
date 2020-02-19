@@ -16,6 +16,7 @@
 
 import hashlib
 import os
+import random
 
 from absl import flags
 from absl import logging
@@ -117,6 +118,10 @@ class DmLab(gym.Env):
         shape=(config['height'], config['width'], 3),
         dtype=np.uint8)
 
+    self.ignore_actions = True
+    if self.ignore_actions:
+      logging.warning('Ignore policy actions! Use this only for performance measurements, not for actual training!')
+
   def _observation(self):
     return self._env.observations()['RGB_INTERLEAVED']
 
@@ -125,7 +130,12 @@ class DmLab(gym.Env):
     return self._observation()
 
   def step(self, action):
-    raw_action = np.array(self._action_set[action], np.intc)
+    if self.ignore_actions:
+      action_ = random.randrange(0, len(self._action_set))
+    else:
+      action_ = action
+
+    raw_action = np.array(self._action_set[action_], np.intc)
     reward = self._env.step(raw_action, num_steps=self._num_action_repeats)
     done = not self._env.is_running()
     observation = None if done else self._observation()

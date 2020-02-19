@@ -53,26 +53,21 @@ tmux new-window -d -n learner
 
 COMMAND='rm /tmp/agent -Rf; '"${LEARNER_BINARY}"' --logtostderr --pdb_post_mortem '"$@"' --num_actors='"${WORKERS}"''
 echo $COMMAND
-tmux send-keys -t "learner" "$COMMAND" ENTER
+MAX_TMUX_SESSIONS=250
+TMUX_SESSIONS=$(( $WORKERS < $MAX_TMUX_SESSIONS ? $WORKERS : $MAX_TMUX_SESSIONS ))
+echo $TMUX_SESSIONS
+sleep 1
 
-if [[ $WORKERS -lt 289 ]]; then
-  for ((id=0; id<$WORKERS; id++)); do
+tmux send-keys -t "learner" "$COMMAND" ENTER
+for ((id=0; id<$TMUX_SESSIONS; id++)); do
     tmux new-window -d -n "actor_${id}"
     COMMAND=''"${ACTOR_BINARY}"' --logtostderr --pdb_post_mortem '"$@"' --num_actors='"${WORKERS}"' --task='"${id}"''
     tmux send-keys -t "actor_${id}" "$COMMAND" ENTER
+done
+for ((id=$MAX_TMUX_SESSIONS; id<$WORKERS; id++)); do
+    COMMAND=''"${NON_ACTOR_BINARY}"' --logtostderr --pdb_post_mortem '"$@"' --num_actors='"${WORKERS}"' --task='"${id}"''
+    (export CUDA_VISIBLE_DEVICES=''; $COMMAND &> /dev/null &)
     echo $COMMAND
-  done
-else
-  for ((id=0; id<288; id++)); do
-      tmux new-window -d -n "actor_${id}"
-      COMMAND=''"${ACTOR_BINARY}"' --logtostderr --pdb_post_mortem '"$@"' --num_actors='"${WORKERS}"' --task='"${id}"''
-      tmux send-keys -t "actor_${id}" "$COMMAND" ENTER
-  done
-  for ((id=288; id<$WORKERS; id++)); do
-      COMMAND=''"${NON_ACTOR_BINARY}"' --logtostderr --pdb_post_mortem '"$@"' --num_actors='"${WORKERS}"' --task='"${id}"''
-      (export CUDA_VISIBLE_DEVICES=''; $COMMAND &> /dev/null &)
-      echo $COMMAND
-  done 
-fi
+done 
 
 tmux attach -t seed_rl
