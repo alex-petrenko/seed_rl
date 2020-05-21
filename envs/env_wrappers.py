@@ -14,8 +14,8 @@ import numpy as np
 # noinspection PyProtectedMember
 from gym import spaces, RewardWrapper, ObservationWrapper
 
-from algorithms.utils.algo_utils import num_env_steps
-from utils.utils import numpy_all_the_way, ensure_dir_exists, log
+from seed_rl.algorithms.utils.algo_utils import num_env_steps
+from seed_rl.utils.utils import numpy_all_the_way, ensure_dir_exists, log
 
 
 def reset_with_info(env):

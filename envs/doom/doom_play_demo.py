@@ -8,9 +8,9 @@ from os.path import join
 
 import cv2
 
-from algorithms.utils.arguments import default_cfg
-from envs.doom.doom_utils import make_doom_env, doom_env_by_name, make_doom_env_impl
-from utils.utils import log
+from seed_rl.algorithms.utils.arguments import default_cfg
+from seed_rl.envs.doom.doom_utils import make_doom_env, doom_env_by_name, make_doom_env_impl
+from seed_rl.utils.utils import log
 
 
 def main():

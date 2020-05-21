@@ -10,11 +10,11 @@ import gym
 import numpy as np
 from filelock import FileLock
 
-from algorithms.utils.multi_env import MultiEnv, MsgType
-from envs.doom.doom_gym import doom_lock_file
-from envs.doom.doom_render import concat_grid, cvt_doom_obs
-from envs.doom.multiplayer.doom_multiagent import find_available_port, DEFAULT_UDP_PORT
-from utils.utils import log
+from seed_rl.algorithms.utils.multi_env import MultiEnv, MsgType
+from seed_rl.envs.doom.doom_gym import doom_lock_file
+from seed_rl.envs.doom.doom_render import concat_grid, cvt_doom_obs
+from seed_rl.envs.doom.multiplayer.doom_multiagent import find_available_port, DEFAULT_UDP_PORT
+from seed_rl.utils.utils import log
 
 
 def safe_get(q, timeout=1e6, msg='Queue timeout'):

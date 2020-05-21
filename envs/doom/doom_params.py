@@ -1,4 +1,4 @@
-from utils.utils import str2bool
+from seed_rl.utils.utils import str2bool
 
 
 def doom_override_defaults(env, parser):

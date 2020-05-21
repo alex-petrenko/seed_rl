@@ -1,6 +1,6 @@
 import gym
 
-from envs.env_wrappers import ResizeWrapper, SkipAndStackFramesWrapper, SkipFramesWrapper, \
+from seed_rl.envs.env_wrappers import ResizeWrapper, SkipAndStackFramesWrapper, SkipFramesWrapper, \
     PixelFormatChwWrapper
 
 ATARI_W = ATARI_H = 84

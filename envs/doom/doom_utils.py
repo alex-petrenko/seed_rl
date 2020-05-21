@@ -1,21 +1,20 @@
 from gym.spaces import Discrete
 
-from envs.doom.action_space import doom_action_space, \
+from seed_rl.envs.doom.action_space import doom_action_space, \
     doom_action_space_full_discretized, doom_action_space_basic, doom_action_space_discretized_no_weap, \
     doom_action_space_extended, doom_turn_and_attack_only
-from envs.doom.doom_gym import VizdoomEnv
+from seed_rl.envs.doom.doom_gym import VizdoomEnv
 
-from envs.doom.doom_model import register_models
-from envs.doom.wrappers.additional_input import DoomAdditionalInput
-from envs.doom.wrappers.bot_difficulty import BotDifficultyWrapper
-from envs.doom.wrappers.multiplayer_stats import MultiplayerStatsWrapper
-from envs.doom.wrappers.observation_space import SetResolutionWrapper, resolutions
-from envs.doom.wrappers.reward_shaping import true_reward_final_position, DoomRewardShapingWrapper, \
+from seed_rl.envs.doom.wrappers.additional_input import DoomAdditionalInput
+from seed_rl.envs.doom.wrappers.bot_difficulty import BotDifficultyWrapper
+from seed_rl.envs.doom.wrappers.multiplayer_stats import MultiplayerStatsWrapper
+from seed_rl.envs.doom.wrappers.observation_space import SetResolutionWrapper, resolutions
+from seed_rl.envs.doom.wrappers.reward_shaping import true_reward_final_position, DoomRewardShapingWrapper, \
     REWARD_SHAPING_DEATHMATCH_V0, true_reward_frags, REWARD_SHAPING_DEATHMATCH_V1, REWARD_SHAPING_BATTLE
-from envs.doom.wrappers.scenario_wrappers.gathering_reward_shaping import DoomGatheringRewardShaping
-from envs.env_wrappers import ResizeWrapper, RewardScalingWrapper, TimeLimitWrapper, RecordingWrapper, \
+from seed_rl.envs.doom.wrappers.scenario_wrappers.gathering_reward_shaping import DoomGatheringRewardShaping
+from seed_rl.envs.env_wrappers import ResizeWrapper, RewardScalingWrapper, TimeLimitWrapper, RecordingWrapper, \
     PixelFormatChwWrapper
-from utils.utils import log
+from seed_rl.utils.utils import log
 
 
 VIZDOOM_INITIALIZED = False
@@ -189,7 +188,7 @@ def make_doom_env_impl(
     else:
         timelimit = cfg.timelimit if cfg.timelimit is not None else doom_spec.timelimit
 
-        from envs.doom.multiplayer.doom_multiagent import VizdoomEnvMultiplayer
+        from seed_rl.envs.doom.multiplayer.doom_multiagent import VizdoomEnvMultiplayer
         env = VizdoomEnvMultiplayer(
             doom_spec.action_space, doom_spec.env_spec_file,
             player_id=player_id, num_agents=num_agents, max_num_players=max_num_players, num_bots=num_bots,
@@ -275,7 +274,7 @@ def make_doom_multiplayer_env(doom_spec, cfg=None, env_config=None, **kwargs):
     if is_multiagent:
         # create a wrapper that treats multiple game instances as a single multi-agent environment
 
-        from envs.doom.multiplayer.doom_multiagent_wrapper import MultiAgentEnv
+        from seed_rl.envs.doom.multiplayer.doom_multiagent_wrapper import MultiAgentEnv
         env = MultiAgentEnv(
             num_agents=num_agents,
             make_env_func=make_env_func,
@@ -284,7 +283,7 @@ def make_doom_multiplayer_env(doom_spec, cfg=None, env_config=None, **kwargs):
         )
     else:
         # if we have only one agent, there's no need for multi-agent wrapper
-        from envs.doom.multiplayer.doom_multiagent_wrapper import init_multiplayer_env
+        from seed_rl.envs.doom.multiplayer.doom_multiagent_wrapper import init_multiplayer_env
         env = init_multiplayer_env(make_env_func, player_id=0, env_config=env_config)
 
     return env
@@ -306,7 +305,5 @@ def ensure_initialized():
     global VIZDOOM_INITIALIZED
     if VIZDOOM_INITIALIZED:
         return
-
-    register_models()
 
     VIZDOOM_INITIALIZED = True

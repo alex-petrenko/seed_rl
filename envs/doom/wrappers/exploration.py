@@ -4,7 +4,7 @@ import numpy as np
 
 import gym
 
-from utils.utils import log
+from seed_rl.utils.utils import log
 
 
 class ExplorationWrapper(gym.Wrapper):

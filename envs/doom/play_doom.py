@@ -1,8 +1,8 @@
 import sys
 
-from algorithms.utils.arguments import default_cfg
-from envs.doom.doom_gym import VizdoomEnv
-from envs.doom.doom_utils import doom_env_by_name, make_doom_multiplayer_env, make_doom_env_impl
+from seed_rl.algorithms.utils.arguments import default_cfg
+from seed_rl.envs.doom.doom_gym import VizdoomEnv
+from seed_rl.envs.doom.doom_utils import doom_env_by_name, make_doom_multiplayer_env, make_doom_env_impl
 
 
 def main():

@@ -210,6 +210,10 @@ def project_root():
     return os.path.dirname(os.path.dirname(__file__))
 
 
+def project_tmp_dir():
+    return ensure_dir_exists(join(project_root(), '.tmp'))
+
+
 def experiments_dir():
     return ensure_dir_exists(join(project_root(), 'train_dir'))
 

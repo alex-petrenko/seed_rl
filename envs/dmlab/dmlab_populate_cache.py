@@ -4,13 +4,13 @@ import time
 
 import psutil
 
-from algorithms.dummy_sampler.sampler import DummySampler
-from algorithms.utils.arguments import maybe_load_from_checkpoint, parse_args
-from envs.create_env import create_env
-from envs.dmlab import dmlab_level_cache
-from envs.dmlab.dmlab30 import DMLAB30_APPROX_NUM_EPISODES_PER_BILLION_FRAMES, DMLAB30_LEVELS_THAT_USE_LEVEL_CACHE
-from utils.timing import Timing
-from utils.utils import log, AttrDict, get_free_disk_space_mb
+from seed_rl.algorithms.dummy_sampler.sampler import DummySampler
+from seed_rl.algorithms.utils.arguments import maybe_load_from_checkpoint, parse_args
+from seed_rl.envs.create_env import create_env
+from seed_rl.envs.dmlab import dmlab_level_cache
+from seed_rl.envs.dmlab.dmlab30 import DMLAB30_APPROX_NUM_EPISODES_PER_BILLION_FRAMES, DMLAB30_LEVELS_THAT_USE_LEVEL_CACHE
+from seed_rl.utils.timing import Timing
+from seed_rl.utils.utils import log, AttrDict, get_free_disk_space_mb
 
 
 DESIRED_TRAINING_LENGTH = int(15e9)

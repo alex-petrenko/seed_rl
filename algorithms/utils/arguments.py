@@ -14,10 +14,10 @@ def get_algo_class(algo):
     algo_class = Agent
 
     if algo == 'PPO':
-        from algorithms.ppo.agent_ppo import AgentPPO
+        from seed_rl.algorithms.ppo.agent_ppo import AgentPPO
         algo_class = AgentPPO
     elif algo == 'APPO':
-        from algorithms.appo.appo import APPO
+        from seed_rl.algorithms.appo.appo import APPO
         algo_class = APPO
     else:
         log.warning('Algorithm %s is not supported', algo)

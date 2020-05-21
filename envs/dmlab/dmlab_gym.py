@@ -9,10 +9,10 @@ import deepmind_lab
 import gym
 import numpy as np
 
-from envs.dmlab import dmlab_level_cache
-from envs.dmlab.dmlab30 import DMLAB_INSTRUCTIONS, DMLAB_MAX_INSTRUCTION_LEN, DMLAB_VOCABULARY_SIZE
-from envs.dmlab.dmlab_level_cache import LEVEL_CACHE_DIR
-from utils.utils import log
+from seed_rl.envs.dmlab import dmlab_level_cache
+from seed_rl.envs.dmlab.dmlab30 import DMLAB_INSTRUCTIONS, DMLAB_MAX_INSTRUCTION_LEN, DMLAB_VOCABULARY_SIZE
+from seed_rl.envs.dmlab.dmlab_level_cache import LEVEL_CACHE_DIR
+from seed_rl.utils.utils import log
 
 ACTION_SET = (
     (0, 0, 0, 1, 0, 0, 0),    # Forward

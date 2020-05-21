@@ -2,10 +2,10 @@ import time
 from multiprocessing import Process
 from unittest import TestCase
 
-from envs.doom.doom_utils import make_doom_env
-from envs.doom.multiplayer.doom_multiagent_wrapper import MultiAgentEnvAggregator
-from envs.tests.test_envs import default_doom_cfg
-from utils.utils import log, AttrDict
+from seed_rl.envs.doom.doom_utils import make_doom_env
+from seed_rl.envs.doom.multiplayer.doom_multiagent_wrapper import MultiAgentEnvAggregator
+from seed_rl.envs.tests.test_envs import default_doom_cfg
+from seed_rl.utils.utils import log, AttrDict
 
 
 class TestDoom(TestCase):

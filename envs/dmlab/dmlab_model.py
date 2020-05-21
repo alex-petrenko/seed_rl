@@ -2,9 +2,9 @@ import torch
 
 from torch import nn
 
-from algorithms.appo.model_utils import ENCODER_REGISTRY, create_standard_encoder, EncoderBase
-from envs.dmlab.dmlab30 import DMLAB_VOCABULARY_SIZE, DMLAB_INSTRUCTIONS
-from utils.utils import log
+from seed_rl.algorithms.appo.model_utils import ENCODER_REGISTRY, create_standard_encoder, EncoderBase
+from seed_rl.envs.dmlab.dmlab30 import DMLAB_VOCABULARY_SIZE, DMLAB_INSTRUCTIONS
+from seed_rl.utils.utils import log
 
 
 class DmlabEncoder(EncoderBase):

@@ -3,15 +3,15 @@ from collections import deque
 
 import numpy as np
 
-from algorithms.utils.algo_utils import EXTRA_EPISODIC_STATS_PROCESSING, EXTRA_PER_POLICY_SUMMARIES
-from envs.dmlab.dmlab30 import dmlab30_level_name_to_level, \
+from seed_rl.algorithms.utils.algo_utils import EXTRA_EPISODIC_STATS_PROCESSING, EXTRA_PER_POLICY_SUMMARIES
+from seed_rl.envs.dmlab.dmlab30 import dmlab30_level_name_to_level, \
     DMLAB30_LEVELS_THAT_USE_LEVEL_CACHE, DMLAB30_LEVELS, HUMAN_SCORES, RANDOM_SCORES, LEVEL_MAPPING
-from envs.dmlab.dmlab_gym import DmlabGymEnv, dmlab_level_to_level_name
-from envs.dmlab.dmlab_level_cache import dmlab_ensure_global_cache_initialized
-from envs.dmlab.dmlab_model import dmlab_register_models
-from envs.dmlab.wrappers.reward_shaping import DmlabRewardShapingWrapper, RAW_SCORE_SUMMARY_KEY_SUFFIX
-from envs.env_wrappers import PixelFormatChwWrapper, RecordingWrapper
-from utils.utils import log, experiment_dir, static_vars
+from seed_rl.envs.dmlab.dmlab_gym import DmlabGymEnv, dmlab_level_to_level_name
+from seed_rl.envs.dmlab.dmlab_level_cache import dmlab_ensure_global_cache_initialized
+from seed_rl.envs.dmlab.dmlab_model import dmlab_register_models
+from seed_rl.envs.dmlab.wrappers.reward_shaping import DmlabRewardShapingWrapper, RAW_SCORE_SUMMARY_KEY_SUFFIX
+from seed_rl.envs.env_wrappers import PixelFormatChwWrapper, RecordingWrapper
+from seed_rl.utils.utils import log, experiment_dir, static_vars
 
 DMLAB_INITIALIZED = False
 

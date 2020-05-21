@@ -3,7 +3,7 @@ from gym.spaces import Discrete, Box
 
 import numpy as np
 
-from algorithms.utils.spaces.discretized import Discretized
+from seed_rl.algorithms.utils.spaces.discretized import Discretized
 
 
 def key_to_action_basic(key):

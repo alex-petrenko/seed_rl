@@ -13,8 +13,8 @@ from filelock import FileLock, Timeout
 from gym.utils import seeding
 from vizdoom.vizdoom import ScreenResolution, DoomGame, Mode, AutomapMode
 
-from algorithms.utils.spaces.discretized import Discretized
-from utils.utils import log, project_tmp_dir
+from seed_rl.algorithms.utils.spaces.discretized import Discretized
+from seed_rl.utils.utils import log, project_tmp_dir
 
 
 def doom_lock_file(max_parallel):
@@ -217,7 +217,7 @@ class VizdoomEnv(gym.Env):
                     )
             except Exception as exc:
                 log.warning('VizDoom game.init() threw an exception %r. Terminate process...', exc)
-                from envs.env_utils import EnvCriticalError
+                from seed_rl.envs.env_utils import EnvCriticalError
                 raise EnvCriticalError()
 
     def initialize(self):

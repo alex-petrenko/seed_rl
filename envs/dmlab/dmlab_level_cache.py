@@ -7,7 +7,7 @@ import shutil
 from os.path import join
 from pathlib import Path
 
-from utils.utils import ensure_dir_exists, log, project_root, safe_ensure_dir_exists
+from seed_rl.utils.utils import ensure_dir_exists, log, project_root, safe_ensure_dir_exists
 
 LEVEL_CACHE_DIR = join(project_root(), '.dmlab_cache')
 LEVEL_SEEDS_FILE_EXT = 'dm_lvl_seeds'
