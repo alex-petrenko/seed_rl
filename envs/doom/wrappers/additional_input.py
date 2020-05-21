@@ -1,7 +1,7 @@
 import gym
 import numpy as np
 
-from seed_rl.envs.doom.wrappers.reward_shaping import NUM_WEAPONS
+from envs.doom.wrappers.reward_shaping import NUM_WEAPONS
 
 
 class DoomAdditionalInput(gym.Wrapper):
@@ -24,7 +24,7 @@ class DoomAdditionalInput(gym.Wrapper):
         self.observation_space = gym.spaces.Dict({
             'obs': current_obs_space,
             'measurements': gym.spaces.Box(
-                low=np.array(low), high=np.array(high),
+                low=np.array(low, dtype=np.float32), high=np.array(high, dtype=np.float32),
             ),
         })
 

@@ -1,8 +1,8 @@
 import sys
 
-from seed_rl.algorithms.utils.arguments import default_cfg
-from seed_rl.envs.create_env import create_env
-from seed_rl.utils.utils import log
+from algorithms.utils.arguments import default_cfg
+from envs.create_env import create_env
+from utils.utils import log
 
 
 def main():

@@ -74,17 +74,17 @@ def create_optimizer(final_iteration):
   return optimizer, learning_rate_fn
 
 
-env_name = 'doom_benchmark'
-
 DOOM_W = 128
 DOOM_H = 72
 
+flags.DEFINE_string('doom_env', 'doom_benchmark', 'env to use')
 flags.DEFINE_integer('width', DOOM_W, 'Width of observation.')
 flags.DEFINE_integer('height', DOOM_H, 'Height of observation.')
 flags.DEFINE_integer('num_action_repeats', 4, 'Number of action repeats.')
 
 def create_doom_env(x):
-    env_name = 'doom_benchmark'
+    env_name = FLAGS.doom_env
+    print('Using env ', env_name)
     cfg = default_cfg(env=env_name, algo=None)
     cfg.pixel_format = 'HWC'
     cfg.res_w = DOOM_W

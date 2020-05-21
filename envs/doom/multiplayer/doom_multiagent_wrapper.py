@@ -10,11 +10,11 @@ import gym
 import numpy as np
 from filelock import FileLock
 
-from seed_rl.algorithms.utils.multi_env import MultiEnv, MsgType
-from seed_rl.envs.doom.doom_gym import doom_lock_file
-from seed_rl.envs.doom.doom_render import concat_grid, cvt_doom_obs
-from seed_rl.envs.doom.multiplayer.doom_multiagent import find_available_port, DEFAULT_UDP_PORT
-from seed_rl.utils.utils import log, kill
+from algorithms.utils.multi_env import MultiEnv, MsgType
+from envs.doom.doom_gym import doom_lock_file
+from envs.doom.doom_render import concat_grid, cvt_doom_obs
+from envs.doom.multiplayer.doom_multiagent import find_available_port, DEFAULT_UDP_PORT
+from utils.utils import log
 
 
 def safe_get(q, timeout=1e6, msg='Queue timeout'):
@@ -58,10 +58,11 @@ def init_multiplayer_env(make_env_func, player_id, env_config, init_info=None):
 
 
 class MultiAgentEnvWorker:
-    def __init__(self, player_id, make_env_func, env_config, use_multiprocessing=False):
+    def __init__(self, player_id, make_env_func, env_config, use_multiprocessing=False, reset_on_init=True):
         self.player_id = player_id
         self.make_env_func = make_env_func
         self.env_config = env_config
+        self.reset_on_init = reset_on_init
 
         if use_multiprocessing:
             self.task_queue, self.result_queue = JoinableQueue(), JoinableQueue()
@@ -75,7 +76,8 @@ class MultiAgentEnvWorker:
     def _init(self, init_info):
         log.info('Initializing env for player %d, init_info: %r...', self.player_id, init_info)
         env = init_multiplayer_env(self.make_env_func, self.player_id, self.env_config, init_info)
-        env.reset()
+        if self.reset_on_init:
+            env.reset()
         return env
 
     @staticmethod
@@ -179,6 +181,8 @@ class MultiAgentEnv(gym.Env):
         self.enable_rendering = False
         self.last_obs = None
 
+        self.reset_on_init = True
+
         self.initialized = False
 
     def await_tasks(self, data, task_type, timeout=None):
@@ -229,7 +233,8 @@ class MultiAgentEnv(gym.Env):
             return
 
         self.workers = [
-            MultiAgentEnvWorker(i, self.make_env_func, self.env_config) for i in range(self.num_agents)
+            MultiAgentEnvWorker(i, self.make_env_func, self.env_config, reset_on_init=self.reset_on_init)
+            for i in range(self.num_agents)
         ]
 
         init_attempt = 0

@@ -1,19 +1,25 @@
 from gym.spaces import Discrete
 
-from seed_rl.envs.doom.action_space import doom_action_space, \
-    doom_action_space_full_discretized, doom_action_space_basic, doom_action_space_discretized_no_weap
-from seed_rl.envs.doom.doom_gym import VizdoomEnv
-from seed_rl.envs.doom.wrappers.additional_input import DoomAdditionalInput
-from seed_rl.envs.doom.wrappers.bot_difficulty import BotDifficultyWrapper
-from seed_rl.envs.doom.wrappers.multiplayer_stats import MultiplayerStatsWrapper
-from seed_rl.envs.doom.wrappers.observation_space import SetResolutionWrapper, resolutions
-from seed_rl.envs.doom.wrappers.reward_shaping import true_reward_final_position, DoomRewardShapingWrapper, \
+from envs.doom.action_space import doom_action_space, \
+    doom_action_space_full_discretized, doom_action_space_basic, doom_action_space_discretized_no_weap, \
+    doom_action_space_extended, doom_turn_and_attack_only
+from envs.doom.doom_gym import VizdoomEnv
+
+from envs.doom.doom_model import register_models
+from envs.doom.wrappers.additional_input import DoomAdditionalInput
+from envs.doom.wrappers.bot_difficulty import BotDifficultyWrapper
+from envs.doom.wrappers.multiplayer_stats import MultiplayerStatsWrapper
+from envs.doom.wrappers.observation_space import SetResolutionWrapper, resolutions
+from envs.doom.wrappers.reward_shaping import true_reward_final_position, DoomRewardShapingWrapper, \
     REWARD_SHAPING_DEATHMATCH_V0, true_reward_frags, REWARD_SHAPING_DEATHMATCH_V1, REWARD_SHAPING_BATTLE
-from seed_rl.envs.doom.wrappers.scenario_wrappers.gathering_reward_shaping import DoomGatheringRewardShaping
-from seed_rl.envs.env_wrappers import ResizeWrapper, RewardScalingWrapper, TimeLimitWrapper, RecordingWrapper, \
+from envs.doom.wrappers.scenario_wrappers.gathering_reward_shaping import DoomGatheringRewardShaping
+from envs.env_wrappers import ResizeWrapper, RewardScalingWrapper, TimeLimitWrapper, RecordingWrapper, \
     PixelFormatChwWrapper
-from seed_rl.utils.utils import log
-from seed_rl.algorithms.utils.arguments import maybe_load_from_checkpoint, get_algo_class, parse_args
+from utils.utils import log
+
+
+VIZDOOM_INITIALIZED = False
+
 
 class DoomSpec:
     def __init__(
@@ -76,12 +82,14 @@ DOOM_ENVS = [
 
     # <==== Environments used in the paper ====>
 
-    # "basic" single-player envs
+    # this is for comparison with other frameworks (wall-time test)
+    DoomSpec('doom_defend_the_center_flat_actions', 'defend_the_center.cfg', Discrete(1 + 3), 1.0),
 
-    DoomSpec('doom_my_way_home', 'my_way_home.cfg', Discrete(1 + 4), 1.0),
-    DoomSpec('doom_deadly_corridor', 'deadly_corridor.cfg', Discrete(1 + 7), 0.01),
-    DoomSpec('doom_defend_the_center', 'defend_the_center.cfg', Discrete(1 + 3), 1.0),
-    DoomSpec('doom_defend_the_line', 'defend_the_line.cfg', Discrete(1 + 3), 1.0),
+    # "basic" single-player envs
+    DoomSpec('doom_my_way_home', 'my_way_home.cfg', doom_action_space_basic(), 1.0),
+    DoomSpec('doom_deadly_corridor', 'deadly_corridor.cfg', doom_action_space_extended(), 0.01),
+    DoomSpec('doom_defend_the_center', 'defend_the_center.cfg', doom_turn_and_attack_only(), 1.0),
+    DoomSpec('doom_defend_the_line', 'defend_the_line.cfg', doom_turn_and_attack_only(), 1.0),
     DoomSpec(
         'doom_health_gathering', 'health_gathering.cfg', Discrete(1 + 4), 1.0,
         extra_wrappers=[(DoomGatheringRewardShaping, {})],  # same as https://arxiv.org/pdf/1904.01806.pdf
@@ -167,6 +175,7 @@ def make_doom_env_impl(
         episode_horizon=None,
         player_id=None, num_agents=None, max_num_players=None, num_bots=0,  # for multi-agent
         custom_resolution=None,
+        **kwargs,
 ):
     skip_frames = skip_frames if skip_frames is not None else cfg.env_frameskip
 
@@ -194,7 +203,7 @@ def make_doom_env_impl(
     should_record = False
     if env_config is None:
         should_record = True
-    elif env_config.worker_index == 0 and env_config.vector_index == 0 and (player_id is None or player_id <= 1):
+    elif env_config.worker_index == 0 and env_config.vector_index == 0 and (player_id is None or player_id == 0):
         should_record = True
 
     if record_to is not None and should_record:
@@ -282,6 +291,8 @@ def make_doom_multiplayer_env(doom_spec, cfg=None, env_config=None, **kwargs):
 
 
 def make_doom_env(env_name, **kwargs):
+    ensure_initialized()
+
     spec = doom_env_by_name(env_name)
 
     if spec.num_agents > 1 or spec.num_bots > 0:
@@ -289,3 +300,13 @@ def make_doom_env(env_name, **kwargs):
         return make_doom_multiplayer_env(spec, **kwargs)
     else:
         return make_doom_env_impl(spec, **kwargs)
+
+
+def ensure_initialized():
+    global VIZDOOM_INITIALIZED
+    if VIZDOOM_INITIALIZED:
+        return
+
+    register_models()
+
+    VIZDOOM_INITIALIZED = True

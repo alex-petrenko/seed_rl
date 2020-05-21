@@ -4,8 +4,8 @@ from collections import deque
 
 import gym
 
-from seed_rl.algorithms.utils.algo_utils import EPS
-from seed_rl.utils.utils import log
+from algorithms.utils.algo_utils import EPS
+from utils.utils import log
 
 NUM_WEAPONS = 8
 

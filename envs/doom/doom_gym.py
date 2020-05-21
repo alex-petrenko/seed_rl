@@ -13,8 +13,8 @@ from filelock import FileLock, Timeout
 from gym.utils import seeding
 from vizdoom.vizdoom import ScreenResolution, DoomGame, Mode, AutomapMode
 
-from seed_rl.algorithms.spaces.discretized import Discretized
-from seed_rl.utils.utils import log
+from algorithms.utils.spaces.discretized import Discretized
+from utils.utils import log, project_tmp_dir
 
 
 def doom_lock_file(max_parallel):
@@ -31,8 +31,7 @@ def doom_lock_file(max_parallel):
     """
     lock_filename = f'doom_{random.randrange(0, max_parallel):03d}.lockfile'
 
-    import tempfile
-    tmp_dir = tempfile.gettempdir()
+    tmp_dir = project_tmp_dir()
     lock_path = join(tmp_dir, lock_filename)
     return lock_path
 
@@ -205,7 +204,7 @@ class VizdoomEnv(gym.Env):
             init_attempt += 1
             try:
                 if with_locking:
-                    with lock.acquire(timeout=10):
+                    with lock.acquire(timeout=20):
                         self.game.init()
                 else:
                     self.game.init()
@@ -288,7 +287,7 @@ class VizdoomEnv(gym.Env):
         return variables
 
     def demo_path(self, episode_idx):
-        demo_name = f'ep_{episode_idx:03d}_rec.lmp'
+        demo_name = f'e{episode_idx:03d}.lmp'
         demo_path = join(self.record_to, demo_name)
         demo_path = os.path.normpath(demo_path)
         return demo_path
@@ -305,8 +304,9 @@ class VizdoomEnv(gym.Env):
             log.warning('Recording episode demo to %s', demo_path)
             self.game.new_episode(demo_path)
         else:
-            # no demo recording (default)
-            self.game.new_episode()
+            if self._num_episodes > 0:
+                # no demo recording (default)
+                self.game.new_episode()
 
         self.state = self.game.get_state()
         img = None
@@ -348,11 +348,11 @@ class VizdoomEnv(gym.Env):
 
         actions_flattened = []
         for i, action in enumerate(actions):
-            if isinstance(spaces[i], gym.spaces.Box):
-                # continuous action
-                actions_flattened.extend(list(action * self.delta_actions_scaling_factor))
-            elif isinstance(spaces[i], Discretized):
+            if isinstance(spaces[i], Discretized):
                 # discretized continuous action
+                # check discretized first because it's a subclass of gym.spaces.Discrete
+                # the order of if clauses here matters! DON'T CHANGE THE ORDER OF IFS!
+
                 continuous_action = spaces[i].to_continuous(action)
                 actions_flattened.append(continuous_action)
             elif isinstance(spaces[i], gym.spaces.Discrete):
@@ -363,6 +363,9 @@ class VizdoomEnv(gym.Env):
                     action_one_hot[action - 1] = 1  # 0th action in each subspace is a no-op
 
                 actions_flattened.extend(action_one_hot)
+            elif isinstance(spaces[i], gym.spaces.Box):
+                # continuous action
+                actions_flattened.extend(list(action * self.delta_actions_scaling_factor))
             else:
                 raise NotImplementedError(f'Action subspace type {type(spaces[i])} is not supported!')
 
