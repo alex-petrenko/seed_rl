@@ -13,31 +13,24 @@
 # limitations under the License.
 
 
-"""VTrace (IMPALA) binary for Vizdoom.
+"""VTrace (IMPALA) binary for DeepMind Lab.
 
 Actor and learner are in the same binary so that all flags are shared.
 """
 
 from absl import app
 from absl import flags
-
 from seed_rl.agents.vtrace import learner
+from seed_rl.atari import env
+from seed_rl.atari import networks
 from seed_rl.common import actor
 from seed_rl.common import common_flags
-from seed_rl.doom import networks
+from seed_rl.atari import networks_vtrace
+
 import tensorflow as tf
 
-from seed_rl.envs.create_env import create_env
-from seed_rl.algorithms.utils.arguments import default_cfg
 import logging
 from logging import handlers
-
-
-FLAGS = flags.FLAGS
-
-# Optimizer settings.
-flags.DEFINE_float('learning_rate', 0.00048, 'Learning rate.')
-flags.DEFINE_float('adam_epsilon', 3.125e-7, 'Adam epsilon.')
 
 class Logger(object):
     level_relations = {
@@ -60,10 +53,16 @@ class Logger(object):
         self.logger.addHandler(sh)
         self.logger.addHandler(th)
 
+FLAGS = flags.FLAGS
+
+# Optimizer settings.
+flags.DEFINE_float('learning_rate', 0.00048, 'Learning rate.')
+flags.DEFINE_float('adam_epsilon', 3.125e-7, 'Adam epsilon.')
+
 
 def create_agent(action_space, unused_env_observation_space,
                  unused_parametric_action_distribution):
-  return networks.DoomSmallConvnet(action_space.n)
+  return networks_vtrace.AtariConvnet(action_space.n)
 
 
 def create_optimizer(final_iteration):
@@ -71,36 +70,19 @@ def create_optimizer(final_iteration):
       FLAGS.learning_rate, final_iteration, 0)
   # optimizer = tf.keras.optimizers.Adam(learning_rate_fn, beta_1=0,
   #                                      epsilon=FLAGS.adam_epsilon)
-  optimizer = tf.keras.optimizers.Adam(FLAGS.learning_Rate, epsilon=FLAGS.adam_epsilon)
+
+  optimizer = tf.keras.optimizers.Adam(FLAGS.learning_rate, epsilon=FLAGS.adam_epsilon)
   return optimizer, learning_rate_fn
 
-
-DOOM_W = 128
-DOOM_H = 72
-
-flags.DEFINE_string('doom_env', 'doom_benchmark', 'env to use')
-flags.DEFINE_integer('width', DOOM_W, 'Width of observation.')
-flags.DEFINE_integer('height', DOOM_H, 'Height of observation.')
-flags.DEFINE_integer('num_action_repeats', 4, 'Number of action repeats.')
-
-def create_doom_env(x):
-    env_name = FLAGS.doom_env
-    print('Using env ', env_name)
-    cfg = default_cfg(env=env_name, algo=None)
-    cfg.pixel_format = 'HWC'
-    cfg.res_w = DOOM_W
-    cfg.res_h = DOOM_H
-    cfg.wide_aspect_ratio = False
-    return create_env(env_name, cfg=cfg)
 
 def main(argv):
   fps_log = Logger('fps.log', level='info')
   if len(argv) > 1:
     raise app.UsageError('Too many command-line arguments.')
   if FLAGS.run_mode == 'actor':
-    actor.actor_loop(create_doom_env)
+    actor.actor_loop(env.create_environment)
   elif FLAGS.run_mode == 'learner':
-    learner.learner_loop(create_doom_env,
+    learner.learner_loop(env.create_environment,
                          create_agent,
                          create_optimizer,
                          fps_log)

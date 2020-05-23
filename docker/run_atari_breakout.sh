@@ -29,9 +29,9 @@ shift 3
 
 export PYTHONPATH=$PYTHONPATH:/
 
-ACTOR_BINARY="CUDA_VISIBLE_DEVICES='' python3 ../${ENVIRONMENT}/${AGENT}_main.py --run_mode=actor --doom_env=doom_defend_the_center_flat_actions --learning_rate=0.0001 --entropy_cost=0.003 --adam_epsilon=1e-6";
-NON_ACTOR_BINARY="python3 ../${ENVIRONMENT}/${AGENT}_main.py --run_mode=actor --doom_env=doom_defend_the_center_flat_actions --learning_rate=0.0001 --entropy_cost=0.003 --adam_epsilon=1e-6";
-LEARNER_BINARY="python3 ../${ENVIRONMENT}/${AGENT}_main.py --run_mode=learner --doom_env=doom_defend_the_center_flat_actions --learning_rate=0.0001 --entropy_cost=0.003 --adam_epsilon=1e-6";
+ACTOR_BINARY="CUDA_VISIBLE_DEVICES='' python3 ../${ENVIRONMENT}/${AGENT}_main.py --run_mode=actor --game=Breakout --learning_rate=0.0001 --adam_epsilon=1e-8 --entropy_cost=0.003";
+NON_ACTOR_BINARY="python3 ../${ENVIRONMENT}/${AGENT}_main.py --run_mode=actor --game=Breakout --learning_rate=0.0001 --adam_epsilon=1e-8 --entropy_cost=0.003";
+LEARNER_BINARY="python3 ../${ENVIRONMENT}/${AGENT}_main.py --run_mode=learner --game=Breakout --learning_rate=0.0001 --adam_epsilon=1e-8 --entropy_cost=0.003";
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
 tmux new-session -d -t seed_rl
