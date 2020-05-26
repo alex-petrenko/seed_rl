@@ -71,7 +71,7 @@ def create_optimizer(final_iteration):
       FLAGS.learning_rate, final_iteration, 0)
   # optimizer = tf.keras.optimizers.Adam(learning_rate_fn, beta_1=0,
   #                                      epsilon=FLAGS.adam_epsilon)
-  optimizer = tf.keras.optimizers.Adam(FLAGS.learning_Rate, epsilon=FLAGS.adam_epsilon)
+  optimizer = tf.keras.optimizers.Adam(FLAGS.learning_rate, epsilon=FLAGS.adam_epsilon)
   return optimizer, learning_rate_fn
 
 
