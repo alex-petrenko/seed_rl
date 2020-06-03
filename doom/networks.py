@@ -17,9 +17,9 @@ class DoomSmallConvnet(tf.Module):
     # Parameters and layers for _torso.
     #(32, 8, 4), (64, 4, 2), (128, 3, 2
     self._stacks = [
-        tf.keras.layers.Conv2D(32, 8, 4, padding='same'),
-        tf.keras.layers.Conv2D(64, 4, 2, padding='same'),
-        tf.keras.layers.Conv2D(128, 3, 2, padding='same'),
+        tf.keras.layers.Conv2D(32, 8, 4, padding='same', activation='relu'),
+        tf.keras.layers.Conv2D(64, 4, 2, padding='same', activation='relu'),
+        tf.keras.layers.Conv2D(128, 3, 2, padding='same', activation='relu'),
     ]
     self._conv_to_linear = tf.keras.layers.Dense(512)
 
@@ -43,9 +43,7 @@ class DoomSmallConvnet(tf.Module):
     for stack in self._stacks:
       conv_out = stack(conv_out)
 
-    conv_out = tf.nn.relu(conv_out)
     conv_out = tf.keras.layers.Flatten()(conv_out)
-
     conv_out = self._conv_to_linear(conv_out)
     conv_out = tf.nn.relu(conv_out)
 
