@@ -19,6 +19,13 @@ RUN apt-get update && apt-get install -y tmux libsm6 libxext6 libxrender-dev
 RUN pip3 install gym[atari]
 RUN pip3 install atari-py
 RUN pip3 install tensorflow_probability==0.9.0
+RUN pip3 install psutil
+RUN pip3 install colorlog
+RUN pip3 install torch
+RUN pip3 install gym
+RUN pip3 install opencv-python
+RUN pip3 install filelock
+RUN pip3 install tensorboardx
 
 # Copy SEED codebase and SEED GRPC binaries.
 ADD . /seed_rl/
